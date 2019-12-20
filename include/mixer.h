@@ -95,6 +95,7 @@ public:
 
   typedef struct
   {
+    uint32_t stamp_ms;
     aux_channel_t channel[NUM_TOTAL_OUTPUTS];
   } aux_command_t;
 

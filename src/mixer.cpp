@@ -214,7 +214,7 @@ void Mixer::mix_output()
       outputs_[i] *= scale_factor;
   }
 
-  // Insert AUX Commands, and assemble combined_output_types array (Does not override mixer values)
+  // Insert AUX Commands, and assemble combined_output_types array (This overrides mixing values if rc overide is active)
 
   // For the first NUM_MIXER_OUTPUTS channels, only write aux_command to channels the mixer is not using
   for (uint8_t i = 0; i < NUM_MIXER_OUTPUTS; i++)
@@ -223,6 +223,20 @@ void Mixer::mix_output()
     {
       outputs_[i] = aux_command_.channel[i].value;
       combined_output_type_[i] = aux_command_.channel[i].type;
+    }
+    else if (aux_command_.channel[i].type == NONE)
+    {
+      combined_output_type_[i] = mixer_to_use_->output_type[i];
+    }
+    else if (mixer_to_use_->output_type[i] == aux_command_.channel[i].type)
+    {
+      if (!RF_.command_manager_.any_sticks_deviated()
+          && (RF_.rc_.switch_mapped(RC::SWITCH_ATT_OVERRIDE) && !RF_.rc_.switch_on(RC::SWITCH_ATT_OVERRIDE))
+          && (RF_.board_.clock_millis() <= aux_command_.stamp_ms + RF_.params_.get_param_int(PARAM_OFFBOARD_TIMEOUT)))
+      {
+        outputs_[i] += aux_command_.channel[i].value;
+      }
+      combined_output_type_[i] = mixer_to_use_->output_type[i];
     }
     else
     {

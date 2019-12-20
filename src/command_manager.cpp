@@ -247,6 +247,14 @@ bool CommandManager::offboard_control_active()
   return false;
 }
 
+bool CommandManager::any_sticks_deviated()
+{
+  bool is_stick_deviated = stick_deviated(MUX_X);
+  is_stick_deviated |= stick_deviated(MUX_Y);
+  is_stick_deviated |= stick_deviated(MUX_Z);
+  return is_stick_deviated;
+}
+
 void CommandManager::set_new_offboard_command(control_t new_offboard_command)
 {
   new_command_ = true;

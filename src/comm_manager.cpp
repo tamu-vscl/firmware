@@ -374,6 +374,7 @@ void CommManager::aux_command_callback(const CommLinkInterface::AuxCommand &comm
   }
 
   // Send the new aux_command to the mixer
+  new_aux_command.stamp_ms = RF_.board_.clock_millis();
   RF_.mixer_.set_new_aux_command(new_aux_command);
 }
 
