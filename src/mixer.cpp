@@ -235,6 +235,7 @@ void Mixer::mix_output()
           && (RF_.board_.clock_millis() <= aux_command_.stamp_ms + RF_.params_.get_param_int(PARAM_OFFBOARD_TIMEOUT)))
       {
         outputs_[i] += aux_command_.channel[i].value;
+        outputs_[i] = (outputs_[i]>1.0) ? 1.0 : outputs_[i];
       }
       combined_output_type_[i] = mixer_to_use_->output_type[i];
     }
